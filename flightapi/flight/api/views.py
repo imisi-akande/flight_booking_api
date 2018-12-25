@@ -119,8 +119,85 @@ class FlightViewSet(viewsets.ModelViewSet):
         }
         return Response(response, status=status.HTTP_200_OK)
 
-
-
 class TicketViewSet(viewsets.ModelViewSet):
+    """
+        Set and get permissions for the ticket view.
+    """
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
+    def get_permissions(self):
+        permission_classes = [IsAuthenticated, ]
+        if self.action in ('create', 'list'):
+            permission_classes = [IsAdminUser]
+        if self.action in ('retrieve', 'destroy'):
+            permission_classes = [IsOwner]
+        return [permission() for permission in permission_classes]
+
+    @action(detail=True, methods=['patch'])
+    def book(self, request, pk=None):
+        queryset = Ticket.objects.all()
+        ticket = get_object_or_404(queryset, pk=pk)
+
+        if ticket.user != request.user:
+            response = dict(message="You are not authorized to book this ticket")
+            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+
+        if ticket.status in (Ticket.CONFIRMED, Ticket.BOOKED):
+            response = dict(message="This ticket has either been booked or purchased")
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
+
+        ticket.status = Ticket.BOOKED
+        ticket.save()
+        serializer = TicketSerializer(ticket)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def purchase(self, request, pk=None):
+        current_user = request.user
+        queryset = Ticket.objects.all()
+        ticket = get_object_or_404(queryset, pk=pk)
+
+        if ticket.user != current_user:
+            response = dict(message="You are not authorized to purchase this ticket")
+            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+
+        if ticket.status == Ticket.BOOKED:
+            ticket.status = Ticket.CONFIRMED
+            ticket.save()
+            notify_user_of_confirmed_ticket.delay(
+                ticket.pk
+            )
+            serializer = TicketSerializer(ticket)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(dict(message="Ticket has been purchased for this flight"), status=400)
+
+    def update(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        queryset = Ticket.objects.all()
+        ticket = get_object_or_404(queryset, pk=pk)
+
+        if ticket.user != request.user:
+            response = dict(message="You are not authorized to update this ticket")
+            return Response(response, status=status.HTTP_401_UNAUTHORIZED)
+
+        if ticket.status in (Ticket.CONFIRMED, Ticket.BOOKED):
+            response = dict(message="Cannot update a booked or confirmed ticket")
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        update_set = {'arrival_time', 'arrival_date', 'departure_time',
+                      'departure_date', 'arrival_location', 'departure_location'}
+
+        request_payload_set = set(request.data.keys())
+
+        if request_payload_set.issubset(update_set):
+            for key, value in request.data.items():
+                setattr(ticket, key, value)
+
+            ticket.save()
+            serializer = TicketSerializer(ticket)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        response = dict(message="Some of the fields provided are not permitted for this action")
+        return Response(response, status=400)
+
