@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'flight',
     'djmoney',
+    'portfolio',
 ]
 
 MIDDLEWARE = [
@@ -105,6 +106,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend', # default
+)
+
+AUTH_USER_MODEL = 'portfolio.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
