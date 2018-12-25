@@ -1,9 +1,9 @@
-from account.api.serializers import (CreateFastPaceUserSerializer,
+from portfolio.api.serializers import (CreateFastPaceUserSerializer,
                                      FastPaceLoginSerializer,
                                      FastPaceUserSerializer,
                                      FileUploadSerializer,
                                      JSONWebTokenSerializer)
-from account.models import User, get_user
+from portfolio.models import User, get_user
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, status, viewsets
@@ -80,8 +80,9 @@ class FastPaceUserLogin(APIView):
         return Response(response, status=400)
 
 
-class FastPaceViewSet(viewsets.ViewSet):
+class FastPaceUserViewSet(viewsets.ViewSet):
     def list(self, request):
+        print(request.user)
         if not request.user.is_staff:
             response = dict(message='You are not authorized to view this information')
             return Response(response, status=status.HTTP_401_UNAUTHORIZED)
@@ -119,7 +120,7 @@ class FastPaceViewSet(viewsets.ViewSet):
     def upload(self, request):
         try:
             file = request.data.get('file')
-        except KeyError: 
+        except KeyError:
             return ParseError('No file attached')
         user = request.user
         user.profile_photo = file

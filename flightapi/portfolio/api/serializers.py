@@ -1,4 +1,4 @@
-from account.models import User
+from portfolio.models import User
 from rest_framework import serializers
 
 
