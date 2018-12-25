@@ -1,10 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
-
 from portfolio.forms import FastPaceUserChangeForm
 from portfolio.models import User
-
 
 # Register your models here.
 
