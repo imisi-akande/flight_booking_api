@@ -53,6 +53,7 @@ class Ticket(FlightMixin):
     booking_reference = models.CharField(max_length=255, blank=True, null=True)
     flight = models.ForeignKey('flight.Flight', on_delete=models.CASCADE, related_name="tickets", null=True)
     status = models.CharField(max_length=50, choices=STATUS, default=RESERVED)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     confirmed_from = models.DateTimeField(blank=True, null=True)
 
