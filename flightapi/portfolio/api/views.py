@@ -119,7 +119,7 @@ class FastPaceUserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['put'])
     def upload(self, request):
         try:
-            file = request.data.get('file')
+            file = request.data['file']
         except KeyError:
             return ParseError('No file attached')
         user = request.user
