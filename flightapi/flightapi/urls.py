@@ -17,14 +17,19 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 
+from portfolio.api.views import FastPaceUserSignup, FastPaceUserLogin, FastPaceUserViewSet
 from flight.api.views import FlightViewSet, TicketViewSet
 
 router = DefaultRouter()
+router.register(r'user', FastPaceUserViewSet, base_name='users')
 router.register(r'ticket', TicketViewSet, base_name='tickets')
 router.register(r'flight', FlightViewSet, base_name='flights')
 
 api_v1 = [
     url(r'^', include(router.urls)),
+    url(r'^signup/$', FastPaceUserSignup.as_view(), name="sign_up"),
+    url(r'^login/$', FastPaceUserLogin.as_view(), name="login"),
+    url(r'^api-auth/', include('rest_framework.urls')),
 ]
 
 urlpatterns = [
