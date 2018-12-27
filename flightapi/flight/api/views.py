@@ -1,12 +1,14 @@
 from django.shortcuts import get_object_or_404
 from flight.api.serializers import FlightSerializer, TicketSerializer
 from flight.models import Flight, Ticket
+from flight.permissions import IsOwner
+from flight.tasks import (notify_user_on_confirmed_ticket,
+                          notify_user_on_reservation)
+from flight.utils import convert_date_to_unix
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from flight.permissions import IsOwner
-from flight.utils import convert_date_to_unix
 
 # Create your views here.
 
@@ -66,6 +68,9 @@ class FlightViewSet(viewsets.ModelViewSet):
             arrival_location=flight.arrival_location
         )
         ticket.save()
+        notify_user_on_reservation.delay(
+            ticket.pk
+        )
         serializer = TicketSerializer(ticket)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -165,7 +170,10 @@ class TicketViewSet(viewsets.ModelViewSet):
         if ticket.status == Ticket.BOOKED:
             ticket.status = Ticket.CONFIRMED
             ticket.save()
-            notify_user_of_confirmed_ticket.delay(
+            notify_user_on_confirmed_ticket.delay(
+                ticket.pk
+            )
+            notify_user_on_confirmed_ticket.delay(
                 ticket.pk
             )
             serializer = TicketSerializer(ticket)
@@ -200,4 +208,3 @@ class TicketViewSet(viewsets.ModelViewSet):
 
         response = dict(message="Some of the fields provided are not permitted for this action")
         return Response(response, status=400)
-

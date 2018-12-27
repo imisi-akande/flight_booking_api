@@ -9,7 +9,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=80, blank=True, null=True)
     last_name = models.CharField(max_length=80, blank=True, null=True)
     email = models.EmailField(blank=True, unique=True, null=True)
-    profile_photo = models.ImageField(upload_to='portfolio_photos/', blank=True, null=True)
+    profile_photo = models.ImageField(upload_to='../flightapi/portfolio_photos/', blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 

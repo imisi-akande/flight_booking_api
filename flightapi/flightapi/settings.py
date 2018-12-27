@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from datetime import timedelta
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -111,6 +112,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = os.getenv('SENDGRID_USERNAME')
+EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+AIRTECH_MAIL = os.getenv('FASTPACE_EMAIL')
+
+#CELERY SETTINGS
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Lagos'
+CELERY_BEAT_SCHEDULE = {
+    'send-email-reminder': {
+        'task': 'flight.tasks.send_reminder_to_travellers',
+        'schedule': crontab(hour=1, minute=0)
+    }
+}
+CELERY_ALWAYS_EAGER = True
+
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -124,7 +149,7 @@ REST_FRAMEWORK = {
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = (
-        'django.contrib.auth.backends.ModelBackend', # default
+    'django.contrib.auth.backends.ModelBackend', # default
 )
 
 JWT_AUTH = {
