@@ -4,6 +4,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+SECRET_KEY = "iloveicecream"
+
 ## Database config
 DATABASES = {
     'default': {
