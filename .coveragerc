@@ -2,7 +2,7 @@
 source = .
 omit =
     */apps.py
-    flightapi/manage.py
+    */manage.py
     portfolio/manager.py
     */wsgi.py
     */tests/*
