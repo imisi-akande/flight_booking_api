@@ -1,4 +1,5 @@
 [run]
+source = .
 omit =
     */apps.py
     manage.py
@@ -7,3 +8,5 @@ omit =
     */tests/*
     */tasks.py
     locustfile.py
+    */environment/*
+    */migrations/*
