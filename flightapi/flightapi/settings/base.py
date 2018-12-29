@@ -72,21 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'flightapi.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
- 'default': {
-      'ENGINE': 'django.db.backends.postgresql_psycopg2',
-      'NAME': os.getenv('DB_NAME'),
-      'USER': os.getenv('DB_USER'),
-      'PORT': os.getenv('DB_PORT'),
-      'HOST': os.getenv('HOST'),
- }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
