@@ -2,4 +2,4 @@
 set -e
 python manage.py makemigrations
 python manage.py migrate
-coverage manage.py test
+coverage run manage.py test
