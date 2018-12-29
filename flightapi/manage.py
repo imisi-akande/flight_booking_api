@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 if os.getenv('ENV') == 'PRODUCTION':
-    settings = "flightapi.settings.prod"
+    settings = "flightapi.settings.production"
 else:
     settings = "flightapi.settings.local"
 
