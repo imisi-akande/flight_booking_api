@@ -5,7 +5,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIRequestFactory
 
-from portfolio.api.views import AirtechUserViewSet
+from portfolio.api.views import FastPaceUserViewSet
 from portfolio.models import User
 from portfolio.tests.factories import login_user, UserFactory
 
@@ -55,13 +55,13 @@ class TestUserLogin(APITestCase):
         self.url = reverse('login')
 
     def test_successful_login(self):
+
         url = reverse('login')
         login_payload = dict(
             email=self.user.email,
-            password="funky"
+            password='1234'
         )
-        response = self.client.post(url, data=json.dumps(login_payload),
-                                    content_type='application/json')
+        response = self.client.post(url, data=login_payload, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['email'], 'sola.smith@yahoo.com')
 

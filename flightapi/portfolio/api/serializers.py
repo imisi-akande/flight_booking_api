@@ -27,7 +27,7 @@ class FastPaceLoginSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'email')
 
 class JSONWebTokenSerializer(serializers.Serializer):
-    token = serializers.CharField(max_length=225)
+    token = serializers.CharField(max_length=1024)
 
 class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:

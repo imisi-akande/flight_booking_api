@@ -1,10 +1,9 @@
-import datetime
 import uuid
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.db import models
 from djmoney.models.fields import MoneyField
-
 from flight.mixins import FlightMixin
 
 
@@ -60,7 +59,7 @@ class Ticket(FlightMixin):
     def save(self, *args, **kwargs):
         if self.status == Ticket.CONFIRMED:
             self.booking_reference = self.reference_id_generator()
-            self.confirmed_from = datetime.datetime.now()
+            self.confirmed_from = datetime.now(tz=timezone.utc)
         super(Ticket, self).save(*args, **kwargs)
 
     def reference_id_generator(self):
