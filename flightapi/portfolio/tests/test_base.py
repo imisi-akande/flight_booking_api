@@ -75,3 +75,146 @@ class TestUserLogin(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['message'], 'Invalid request')
 
+class TestFastPaceUser(APITestCase):
+
+    def setUp(self):
+        self.user1 = UserFactory(
+            first_name='segun',
+            last_name='mathews',
+            email='segun@gmail.com',
+            password='1234',
+            is_staff=True
+        )
+        self.user2 = UserFactory(
+            first_name='taiwo',
+            last_name='adedotun',
+            email='taiwo@gmail.com',
+            password='1234',
+        )
+        self.user3 = UserFactory(
+            first_name='kunle',
+            last_name='gold',
+            email='kunle@gmail.com',
+            password='1234',
+        )
+        valid_payload = {
+            "email": 'segun@gmail.com',
+            "password": '1234'
+        }
+        self.factory = APIRequestFactory()
+
+        self.admin = login_user(valid_payload)
+        self.non_admin = login_user(dict(email=self.user3.email, password="1234"))
+
+    def test_list_all_admin(self):
+        url = reverse('users-list')
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'get': 'list',
+            }
+        )
+        request = self.factory.get(url, HTTP_AUTHORIZATION='JWT {}'.format(
+            self.admin.data['token']))
+        response = view(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['first_name'], 'segun')
+        self.assertEqual(response.data[0]['email'], 'segun@gmail.com')
+
+    def test_list_non_admin(self):
+        url = reverse('users-list')
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'get': 'list',
+            }
+        )
+        request = self.factory.get(url, HTTP_AUTHORIZATION='JWT {}'.format(
+            self.non_admin.data['token']))
+        response = view(request)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data['message'], 'You are not authorized to view this information')
+
+    def test_get_user_by_id(self):
+        url = reverse('users-detail', args=(self.user3.pk,))
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'get': 'retrieve',
+            }
+        )
+        request = self.factory.get(url, HTTP_AUTHORIZATION='JWT {}'.format(
+            self.admin.data['token']))
+
+        response = view(request, pk=self.user3.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['first_name'], 'kunle')
+        self.assertEqual(response.data['email'], 'kunle@gmail.com')
+    
+    def test_successful_user_update(self):
+        url = reverse('users-detail', args=(self.user3.pk,))
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'put': 'update'
+            }
+        )
+        request = self.factory.put(url, data=dict(first_name='Imisioluwa'), HTTP_AUTHORIZATION='JWT {}'.format(
+            self.non_admin.data['token']))
+        response = view(request, pk=str(self.user3.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['first_name'], 'Imisioluwa')
+
+    def test_unsuccessful_user_update(self):
+        url = reverse('users-detail', args=(self.user3.pk,))
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'put': 'update'
+            }
+        )
+        request = self.factory.put(url, data=dict(first_name='segun'), HTTP_AUTHORIZATION='JWT {}'.format(
+            self.non_admin.data['token']))
+        response = view(request, pk=str(self.user2.pk))
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data['message'], 'You are not authorized to update this information')
+    
+    def test_unsuccessful_user_update_field_not_allowed(self):
+        url = reverse('users-detail', args=(self.user2.pk,))
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'put': 'update'
+            }
+        )
+        request = self.factory.put(url, data=dict(email='imisioluwa.com'), HTTP_AUTHORIZATION='JWT {}'.format(
+            self.non_admin.data['token']))
+        response = view(request, pk=str(self.user2.pk))
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data['message'], 'You are not authorized to update this information')
+
+    def test_upload_photo_successful(self):
+        url = reverse('users-upload')
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'put': 'upload'
+            }
+        )
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        image = os.path.join(base_dir, 'portfolio_photos/photo1.jpg')
+
+        request = self.factory.put(url, data=dict(file=image), HTTP_AUTHORIZATION='JWT {}'.format(
+            self.non_admin.data['token']))
+        response = view(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_photo_successful(self):
+        url = reverse('users-delete-photo')
+        view = FastPaceUserViewSet.as_view(
+            actions={
+                'delete': 'delete_photo'
+            }
+        )
+        request = self.factory.delete(url, HTTP_AUTHORIZATION='JWT {}'.format(
+            self.non_admin.data['token']))
+
+        response = view(request)
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.data['message'], 'Profile photo deleted successfully')
+    
+
+
