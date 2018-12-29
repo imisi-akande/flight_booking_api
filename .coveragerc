@@ -1,0 +1,9 @@
+[run]
+omit =
+    */apps.py
+    manage.py
+    portfolio/manager.py
+    */wsgi.py
+    */tests/*
+    */tasks.py
+    locustfile.py

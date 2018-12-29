@@ -6,8 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+if os.getenv('ENV') == 'PRODUCTION':
+    settings = "flightapi.settings.production"
+else:
+    settings = "flightapi.settings.local"
+
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "flightapi.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings)
     try:
         from django.core.management import execute_from_command_line
     except ImportError:

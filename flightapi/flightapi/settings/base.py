@@ -20,13 +20,6 @@ load_dotenv()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '6d%5eo7k=hwc$&=svb3m^3)(o-d3ij#)g&rx#0%=wdu8e4y6yc'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -79,21 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'flightapi.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
- 'default': {
-      'ENGINE': 'django.db.backends.postgresql_psycopg2',
-      'NAME': os.getenv('DB_NAME'),
-      'USER': os.getenv('DB_USER'),
-      'PORT': os.getenv('DB_PORT'),
-      'HOST': os.getenv('HOST'),
- }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -145,6 +123,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 # Authentication backends
