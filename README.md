@@ -18,15 +18,15 @@ used are Celery and Redis to anchor concurrent tasks.
 ### Set up environment variables
 - To set up environment variables, define the following in a `.env` file:
 
-> DB_NAME - The name of your database
-> DB_PORT - The port connection of your database
-> DB_USER - Name of the database user with privileges
-> HOST - Name of the local host
-> SECRET_KEY - Parameter used for encryption and decryption
-> JWT_SECRET_KEY - Parameters to authenticate server APi
-> SENDGRID_USERNAME -  Your Email delivery service username
-> SENDGRID_PASSWORD - Your Email delivery service password
-> SENDGRID_API_KEY - Your API key on the service settings
+- DB_NAME - The name of your database
+-  DB_PORT - The port connection of your database
+-  DB_USER - Name of the database user with privileges
+-  HOST - Name of the local host
+-  SECRET_KEY - Parameter used for encryption and decryption
+-  JWT_SECRET_KEY - Parameters to authenticate server APi
+-  SENDGRID_USERNAME -  Your Email delivery service username
+- SENDGRID_PASSWORD - Your Email delivery service password
+- SENDGRID_API_KEY - Your API key on the service settings
 
 ### Set up Database
 - Create a database:
