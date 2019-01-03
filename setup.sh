@@ -34,7 +34,7 @@ function flightbooking() {
         source flightbooking/bin/activate
         echo "Your virtual environment has been activated"
       else
-        echo "It appears there is a development environment"
+        echo "It appears there is an existing development environment"
       fi
     fi
 }
