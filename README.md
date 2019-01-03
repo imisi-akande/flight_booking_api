@@ -1,4 +1,6 @@
 # Flight Booking API
+[![Build Status](https://travis-ci.org/imisi-akande/flight_booking_api.svg?branch=develop)](https://travis-ci.org/imisi-akande/flight_booking_api)
+[![Coverage Status](https://coveralls.io/repos/github/imisi-akande/flight_booking_api/badge.svg)](https://coveralls.io/github/imisi-akande/flight_booking_api)
 
 ## Description
 This repository will contain the API endpoints and models for the Fastpace Flight booking that enables users to book, purchase, and reserve tickets for a flight. The system was built using the Django rest framework. Other technologies
