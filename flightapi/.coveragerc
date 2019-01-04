@@ -4,6 +4,7 @@ omit =
     */apps.py
     */manage.py
     portfolio/manager.py
+    */celeryapp.py
     */wsgi.py
     */tests/*
     */tasks.py
