@@ -9,8 +9,17 @@ https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/
 
 import os
 
+from dotenv import load_dotenv
+
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "flightapi.settings")
+load_dotenv()
+
+if os.getenv('ENV') == 'PRODUCTION':
+    settings = "flightapi.settings.production"
+else:
+    settings = "flightapi.settings.local"
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings)
 
 application = get_wsgi_application()
